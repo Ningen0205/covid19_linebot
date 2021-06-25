@@ -1,9 +1,6 @@
 from django.contrib import admin
-from .models import User,Post,infection,prefecture
+from .models import infection,prefecture
 # Register your models here.
 
-
-admin.site.register(User)
-admin.site.register(Post)
 admin.site.register(infection)
 admin.site.register(prefecture)
