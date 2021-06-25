@@ -1,7 +1,7 @@
 # django
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User,Post,infection,prefecture
+from .models import infection,prefecture
 from .scraping import get_scraping
 
 # json
