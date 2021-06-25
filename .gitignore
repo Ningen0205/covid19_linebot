@@ -1,4 +1,4 @@
 .env
 .env.develop
 
-.sqlite3
+db.sqlite3
