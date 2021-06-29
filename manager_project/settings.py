@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 
 from pathlib import Path
+from socket import gethostname
+
+# 環境切り分け用にホスト情報を取得
+hostname = gethostname()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,19 +79,21 @@ WSGI_APPLICATION = 'manager_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-#sqlite3を使う時に必要
-DATABASES = {
+if "COMPUTER-NAME" in hostname:
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
-#postgresqlで使うときに必要
-
-from pathlib import Path
-import dj_database_url
-db_from_env = dj_database_url.config()
-DATABASES={'default'}.update(db_from_env)
+    ALLOWED_HOSTS = []
+else:
+    import dj_database_url
+    db_from_env = dj_database_url.config()
+    DATABASES = {
+        'default': dj_database_url.config()
+    }
+    ALLOWED_HOSTS = ['*']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
