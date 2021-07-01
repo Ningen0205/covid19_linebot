@@ -131,7 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # 環境の切り分け
-if os.path.isfile('./local_settings.py'):
+if os.path.isfile('./manager_project/local_settings.py'):
     # ローカル開発環境なら、local_settings.py　をインポート
     from .local_settings import *
 else:
