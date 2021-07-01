@@ -92,8 +92,8 @@ WSGI_APPLICATION = 'manager_project.wsgi.application'
 #postgresqlの場合
 import dj_database_url
 
-db_from_env = dj_database_url.config()
-DATABASES=['default'].update(db_from_env)
+# db_from_env = dj_database_url.config()
+# DATABASES=['default'].update(db_from_env)
 
 ALLOWED_HOSTS = ['*']
 
@@ -149,6 +149,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEBUG = False
 
 try:
-    from .settings import *
+    from .local_settings import *
 except ImportError:
     pass
