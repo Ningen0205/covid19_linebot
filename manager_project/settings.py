@@ -81,17 +81,19 @@ WSGI_APPLICATION = 'manager_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+#sqlite3の場合
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
 
+#postgresqlの場合
 import dj_database_url
 
 db_from_env = dj_database_url.config()
-DATABASES['default'].update(db_from_env)
+DATABASES=['default'].update(db_from_env)
 
 ALLOWED_HOSTS = ['*']
 
@@ -147,7 +149,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEBUG = False
 
 try:
-    from .local_settings import *
+    from .settings import *
 except ImportError:
     pass
-
