@@ -29,9 +29,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-as%d7)^%j@%)933xzj3q2-!9c0h619u*elsf8ljc@%=@v-4iz4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['.ngrok.io','localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -80,22 +80,6 @@ WSGI_APPLICATION = 'manager_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-#sqlite3の場合
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
-
-#postgresqlの場合
-import dj_database_url
-
-# db_from_env = dj_database_url.config()
-# DATABASES=['default'].update(db_from_env)
-
-ALLOWED_HOSTS = ['*']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -146,9 +130,15 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-DEBUG = False
-
-try:
+# 環境の切り分け
+if os.path.isfile('./local_settings.py'):
+    # ローカル開発環境なら、local_settings.py　をインポート
     from .local_settings import *
-except ImportError:
+else:
+    # 本番環境
+    import dj_database_url
+
+    db_from_env = dj_database_url.config()
+    DATABASES=['default'].update(db_from_env)
+    # DATABASES = { 'default': {} }
     pass
