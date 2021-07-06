@@ -39,7 +39,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 def webhook(request):
     # signatureの取得
 
-    print(request)
+    print(request.META)
 
     signature = request.META['x-line-signature']
     body = request.body.decode('utf-8')
