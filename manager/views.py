@@ -38,6 +38,9 @@ handler = WebhookHandler(CHANNEL_SECRET)
 @csrf_exempt
 def webhook(request):
     # signatureの取得
+
+    print(request)
+
     signature = request.META['x-line-signature']
     body = request.body.decode('utf-8')
 
