@@ -35,7 +35,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 def webhook(request):
     # signatureの取得
-    signature = request.META['HTTP_X_LINE_SIGNATURE']
+    signature = request.META['x-line-signature']
     body = request.body.decode('utf-8')
 
     try:
