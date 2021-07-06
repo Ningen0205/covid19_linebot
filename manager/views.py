@@ -53,12 +53,12 @@ def webhook(request):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    i = prefecture.objects.filter(name="").first()
+    i = prefecture.objects.filter(name=event.message.text).first()
     if i == None:
         reply_text = "都道府県入れてね"
     else:
         reply_text =  f'{i.id()}番目の都道府県だよ'
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text)
+        TextSendMessage(text=reply_text)
     )
