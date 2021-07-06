@@ -4,6 +4,9 @@ from django.http import HttpResponseForbidden,HttpResponse
 from .models import infection,prefecture
 from .scraping import get_scraping
 
+#csrf無効化
+from django.views.decorators.csrf import csrf_exempt
+
 # json
 import json
 from collections import OrderedDict
@@ -32,7 +35,7 @@ CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 line_bot_api = LineBotApi(ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
-
+@csrf_exempt
 def webhook(request):
     # signatureの取得
     signature = request.META['HTTP_X_LINE_SIGNATURE']
