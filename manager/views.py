@@ -32,7 +32,6 @@ CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 line_bot_api = LineBotApi(ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
-
 def webhook(request):
     # signatureの取得
     signature = request.META['HTTP_X_LINE_SIGNATURE']
