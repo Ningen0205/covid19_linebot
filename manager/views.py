@@ -48,8 +48,16 @@ def webhook(request):
         print("Invalid signature. Please check your channel access token/channel secret.")
         return HttpResponseForbidden()
 
+    return HttpResponse('送信完了')
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    i = prefecture.objects.filter(name="").first()
+    if i == None:
+        reply_text = "都道府県入れてね"
+    else:
+        reply_text =  f'{i.id()}番目の都道府県だよ'
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text)
