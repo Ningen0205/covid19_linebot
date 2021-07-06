@@ -29,10 +29,11 @@ load_dotenv(dotenv_path)
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
 CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 
+line_bot_api = LineBotApi(ACCESS_TOKEN)
+handler = WebhookHandler(CHANNEL_SECRET)
+
 # Create your views here.
 def index(request):
-    line_bot_api = LineBotApi(ACCESS_TOKEN)
-
     infections = infection.objects.all().order_by('id')
     
 
@@ -51,12 +52,10 @@ def index(request):
     return HttpResponse('メッセージ送信したよ')
 
 def webhook(request):
-    line_bot_api = LineBotApi(ACCESS_TOKEN)
-    handler = WebhookHandler(CHANNEL_SECRET)
-
     # signatureの取得
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
+
     try:
         # 署名の検証を行い、成功した場合にhandleされたメソッドを呼び出す
         handler.handle(body, signature)
@@ -64,18 +63,12 @@ def webhook(request):
         print("Invalid signature. Please check your channel access token/channel secret.")
         return HttpResponseForbidden()
 
-    @handler.add(MessageEvent, message=TextMessage)
-    def handle_message(event):
-        reply_token = event.reply_token
-
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=event.message.text)
-        )
-
-        print(event.message.text)
-
-    return HttpResponse('tes')
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=event.message.text)
+    )
 
 
 def init_database(request):
