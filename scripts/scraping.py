@@ -31,8 +31,6 @@ def get_scraping():
   data = soup.find('g', { 'id' : 'mc1'}).text
   updated_time = soup.findAll('span', { 'class' : 'title-block-note'})[1].text
 
-  print(updated_time)
-
   # 変数の初期化
   result = cl.OrderedDict()
   result["updated_time"] = updated_time
@@ -66,5 +64,3 @@ def run():
                 obj = prefecture.objects.filter(id=j).first()
                 infection.objects.create(prefecture=obj,infection=n,date_string=date)
                 j += 1
-    
-    print('スクレイピング終了')
