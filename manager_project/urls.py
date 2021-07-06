@@ -20,3 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('manager/',include("manager.urls")),
 ]
+# webのURLの後ろにadminと書いたら、admin.site.urlsを開く(多分importした中にある)
+# webのURLの後ろにmanegerと書いたら、managerフォルダのurlsを開く

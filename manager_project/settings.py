@@ -129,6 +129,7 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CSRF_COOKIE_SECURE = True
 
 # 環境の切り分け
 if os.path.isfile('./manager_project/local_settings.py'):
@@ -137,6 +138,8 @@ if os.path.isfile('./manager_project/local_settings.py'):
 else:
     # 本番環境
     import dj_database_url
+
+    
 
     DATABASES = {
         'default': dj_database_url.config()

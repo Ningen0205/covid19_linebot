@@ -1,6 +1,6 @@
 # django
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponseForbidden,HttpResponse
 from .models import infection,prefecture
 from .scraping import get_scraping
 
@@ -9,13 +9,16 @@ import json
 from collections import OrderedDict
 
 # linebot関連
-from linebot import LineBotApi
-from linebot.models import TextSendMessage
+from linebot import LineBotApi,WebhookHandler
+from linebot.models import MessageEvent, TextMessage,TextSendMessage
 
 # .env関連
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+
+# error関連
+from linebot.exceptions import InvalidSignatureError
 
 # Load .env
 load_dotenv(verbose=True)
@@ -24,6 +27,7 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 
 # Create your views here.
 def index(request):
@@ -88,10 +92,36 @@ def test(request):
                 infection.objects.create(prefecture=obj,infection=n,date_string=date)
                 j += 1
     
+
     return HttpResponse('成功')
 
 def webhook(request):
-    return HttpResponse('test')
+    line_bot_api = LineBotApi(ACCESS_TOKEN)
+    handler = WebhookHandler(CHANNEL_SECRET)
+
+    # signatureの取得
+    signature = request.META['HTTP_X_LINE_SIGNATURE']
+    body = request.body.decode('utf-8')
+    try:
+        # 署名の検証を行い、成功した場合にhandleされたメソッドを呼び出す
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        print("Invalid signature. Please check your channel access token/channel secret.")
+        return HttpResponseForbidden()
+
+    @handler.add(MessageEvent, message=TextMessage)
+    def handle_message(event):
+        reply_token = event.reply_token
+
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=event.message.text)
+        )
+
+        print(event.message.text)
+
+    return HttpResponse('tes')
+
 
 def init_database(request):
     prefecture_list = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
