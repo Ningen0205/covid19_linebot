@@ -16,6 +16,6 @@ python manage.py runserver
 プラットフォームとしてHerokuを使用し、Python(Django)でスクレイピングし、Lineメッセージとして送信する機能があるリポジトリです。
 
 # 利用方法
-秘匿情報の登録(.envに記載か環境変数に登録)や、データベースのマイグレーションを完了していることが前提です。
-python manage.py runscript scraping を実行すると、毎日新聞社のコロナ情報のページから情報をスクレイピングしてDBに格納します。
-python manage.py runscript send_message　を実行するとLineメッセージとして、取得している最新の感染者数を全員に送信します。
+秘匿情報の登録(.envに記載か環境変数に登録)や、データベースのマイグレーションを完了していることが前提です。  
+python manage.py runscript scraping を実行すると、毎日新聞社のコロナ情報のページから情報をスクレイピングしてDBに格納します。  
+python manage.py runscript send_message　を実行するとLineメッセージとして、取得している最新の感染者数を全員に送信します。  
