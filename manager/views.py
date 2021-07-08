@@ -49,7 +49,7 @@ def webhook(request):
 # テキストメッセージが送信された時のハンドルイベント
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    if event.message.text == '日本':
+    if event.message.text == '全国':
 
         infections = infection.objects.order_by('date').reverse()
         infections = infections[:47]
@@ -62,7 +62,7 @@ def handle_message(event):
             sum_infection += infections[i].infection
         
         reply_text += f'本日の合計感染者数は{sum_infection}人でした。'
-        
+
     else:
         prefecture_obj = prefecture.objects.filter(name=event.message.text).first()
         if prefecture_obj == None:
