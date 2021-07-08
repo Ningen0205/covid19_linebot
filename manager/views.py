@@ -2,14 +2,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseForbidden,HttpResponse
 from .models import infection,prefecture
-from .scraping import get_scraping
 
 #csrf無効化
 from django.views.decorators.csrf import csrf_exempt
-
-# json
-import json
-from collections import OrderedDict
 
 # linebot関連
 from linebot import LineBotApi,WebhookHandler
@@ -51,6 +46,7 @@ def webhook(request):
     return HttpResponse('送信完了')
 
 
+# テキストメッセージが送信された時のハンドルイベント
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     i = prefecture.objects.filter(name=event.message.text).first()
