@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-as%d7)^%j@%)933xzj3q2-!9c0h619u*elsf8ljc@%=@v-4iz4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -136,14 +136,10 @@ if os.path.isfile('./manager_project/local_settings.py'):
     # ローカル開発環境なら、local_settings.py　をインポート
     from .local_settings import *
 else:
-    # 本番環境
+    # 本番環境(heroku)
     import dj_database_url
 
-    
-
+    # DB情報をherokuの物に変更
     DATABASES = {
         'default': dj_database_url.config()
     }
-
-    ALLOWED_HOSTS = ['*']
-    pass
