@@ -49,11 +49,16 @@ def webhook(request):
 # テキストメッセージが送信された時のハンドルイベント
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    i = prefecture.objects.filter(name=event.message.text).first()
-    if i == None:
-        reply_text = "都道府県入れてね"
+    prefecture_obj = prefecture.objects.filter(name=event.message.text).first()
+    if prefecture_obj == None:
+        reply_text = "都道府県を正式名称で入れてください。"
     else:
-        reply_text =  f'{i.id}番目の都道府県だよ'
+        latest_infection = infection.objects.filter(prefecture=prefecture_obj).first()
+        if latest_infection == None:
+            reply_text = '感染者情報が取得できませんでした。'
+        else:
+            reply_text = f'{prefecture_obj.name}の感染者数は、{latest_infection.date_string}で、{latest_infection.infection}人です。'
+
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
