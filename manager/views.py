@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # linebot関連
 from linebot import LineBotApi,WebhookHandler
-from linebot.models import MessageEvent, TextMessage,TextSendMessage
+from linebot.models import MessageEvent,TextMessage,TextSendMessage,FollowEvent
 
 # .env関連
 import os
@@ -57,4 +57,12 @@ def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
+    )
+
+# 友達追加した際のイベントを仮組で追加
+@handler.add(FollowEvent)
+def handle_follow(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text='追加してくれてありがとう!')
     )
