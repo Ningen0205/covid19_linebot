@@ -13,7 +13,7 @@ def run():
     line_bot_api = LineBotApi(ACCESS_TOKEN)
 
     #　idが高い順番(最新情報)に並び替えして47件を取得(47都道府県)
-    infections = infection.objects.order_by('id').reverse()
+    infections = infection.objects.order_by('date').reverse()
     infections = infections[:47]
     
     message = f'{infections[46].date_string}時点の感染者数を報告します。 \n'
