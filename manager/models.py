@@ -14,17 +14,17 @@ class infection(models.Model):
     
     @classmethod
     def latest_infection(cls, prefecture_name):
-        pass
+        from .models import prefecture
+        
+        prefecture_obj = prefecture.objects.filter(name=prefecture_name).first()
+        return cls.objects.filter(prefecture=prefecture_obj).order_by('date').last()
+
 
     @classmethod
     def check_messeage(cls, message):
-        from .models import prefecture
-        prefecture_obj = prefecture.objects.filter(name=message).first()
 
         if message == '全国':
             return cls.latest_all_infections()
-        elif prefecture_obj != None:
-            return cls.objects.filter(prefecture=prefecture_obj).order_by('date').last()
         else:
             return False
 
