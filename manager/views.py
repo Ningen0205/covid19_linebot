@@ -53,7 +53,7 @@ def handle_message(event):
     if prefecture_obj == None:
         reply_text = "都道府県を正式名称で入れてください。"
     else:
-        latest_infection = infection.objects.filter(prefecture=prefecture_obj).order_by('date').reverse().first()
+        latest_infection = infection.objects.filter(prefecture=prefecture_obj).order_by('date').last()
         if latest_infection == None:
             reply_text = '感染者情報が取得できませんでした。'
         else:
