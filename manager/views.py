@@ -90,7 +90,7 @@ def make_button_template():
     )
     return message_template
 
-@handler.add(MessageEvent, message=(TextMessage))
+@handler.add(MessageEvent, message=TextMessage)
 def handle_image_message(event):
     messages = make_button_template()
     line_bot_api.reply_message(
