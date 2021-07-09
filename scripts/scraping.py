@@ -1,12 +1,13 @@
 
 # スクレイピング関連
 from selenium import webdriver
-import chromedriver_binary
 from bs4 import BeautifulSoup
 
-# 順序がある辞書を作成
+# import しないとchromedriverがドライバーがない旨のエラーを吐く
+import chromedriver_binary
+
+# 順序付き辞書を作成するため
 import collections as cl
-import json
 
 # model
 from manager.models import infection, prefecture
@@ -23,6 +24,7 @@ def get_scraping():
     driver.implicitly_wait(10)
     url = 'https://mainichi.jp/covid19'
 
+    # 実際にurlから要素を取得してBeautifulSoupに読み込ませている
     driver.get(url)
     html = driver.page_source.encode('utf-8')
     soup = BeautifulSoup(html, 'html.parser')
@@ -36,7 +38,7 @@ def get_scraping():
     result["updated_time"] = updated_time
     result["masculine_people"] = cl.OrderedDict()
 
-  # 実際にデータを取得している
+  # soupで読み込んだ部分から、必要な部分をスクレイピング（都道府県部分）
     for i in range(1,48,1):
         prefecture_data = soup.find('g', { 'id' : f'mc{i}'}).text.split()
         
