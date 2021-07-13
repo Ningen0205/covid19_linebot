@@ -1,4 +1,3 @@
-import os
 import sys
 
 # message.pyをimportするために、親ディレクトリへ移動
