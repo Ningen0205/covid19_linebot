@@ -20,4 +20,5 @@ class infection(models.Model):
 
 class prefecture(models.Model):
     name = models.CharField(max_length=100)
+    objects = models.Manager()
     manager = prefecture_manager()
