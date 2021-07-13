@@ -13,7 +13,7 @@ class infection_manager(models.Manager):
 
     def latest_region_prefecture_data(self, region_array):
         result = []
-        for p in region_array:
+        for p in reversed(region_array):
             result.append(self.latest_prefecture_data(p))
 
         return result
