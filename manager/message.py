@@ -29,22 +29,25 @@ def create_message_body(target, message=''):
         # メッセージの作成
         for i in infection_array:
             message += f'{i.prefecture.name}:{i.infection} \n'
+        
+        return message
 
     elif prefecture.manager.check_prefecture(target):
         # 最新の都道府県の情報を取得
         prefecture_obj = prefecture.manager.get_prefecture_data(target)
         latest_infection_data = infection.manager.latest_prefecture_data(prefecture_obj=prefecture_obj)
         message += f'{latest_infection_data.prefecture.name}:{latest_infection_data.infection}'
+
+        return message
     elif target == '全国':
         # 最新47都道府県の情報を取得
         japan_infection_data = infection.manager.latest_prefecture_all_data()
         for i in reversed(japan_infection_data):
             message += f'{i.prefecture.name}:{i.infection} \n'
-    
-    else:
-        message = '都道府県を正しく入力してください。'
-    
-    return message
+        
+        return message
+
+    return '都道府県を正しく入力してください。'
 
 def create_message(target):
     message = create_message_header()
