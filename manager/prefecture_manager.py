@@ -12,6 +12,8 @@ class prefecture_manager(models.Manager):
     INDEX_KYUSHU = [40,41,42,43,44,45,46]
     INDEX_OKINAWA = [47]
 
+    REGION_LIST = {'北海道','東北','関東','中部','近畿','中国','四国','九州','沖縄'}
+
     def __create_arrays(self, index_arrays):
         result = []
 
@@ -36,6 +38,9 @@ class prefecture_manager(models.Manager):
     def kinki(self):
         return self.__create_arrays(self.INDEX_KINKI)
     
+    def chugoku(self):
+        return self.__create_arrays(self.INDEX_CHUGOKU)
+    
     def shikoku(self):
         return self.__create_arrays(self.INDEX_SHIKOKU)
     
@@ -57,6 +62,8 @@ class prefecture_manager(models.Manager):
                 return self.chubu()
             elif region_name == '近畿':
                 return self.kinki()
+            elif region_name == '中国':
+                return self.chugoku()
             elif region_name == '四国':
                 return self.shikoku()
             elif region_name == '九州':
@@ -70,7 +77,7 @@ class prefecture_manager(models.Manager):
         return super().get_queryset().filter(name=prefecture_name).first()
     
     def check_region(self, region_name):
-        return region_name in {'北海道','東北','関東','中部','近畿','四国','九州','沖縄'}
+        return region_name in self.REGION_LIST
     
     def check_prefecture(self, prefecture_name):
         return bool(super().get_queryset().filter(name=prefecture_name).first())
