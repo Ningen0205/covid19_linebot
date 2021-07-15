@@ -1,6 +1,8 @@
 # django
 from django.shortcuts import render
 from django.http import HttpResponseForbidden,HttpResponse
+from linebot.models.actions import MessageAction
+from linebot.models.send_messages import QuickReply, QuickReplyButton
 from .models import infection,prefecture
 
 #csrf無効化
@@ -52,12 +54,24 @@ def webhook(request):
 # テキストメッセージが送信された時のハンドルイベント
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    reply_text = create_message(event.message.text)
+    user_message = event.message.text
+    if prefecture.manager.check_region(user_message):
+        region_data = prefecture.manager.get_region_data(user_message)
+        items = [QuickReplyButton(action=MessageAction(label=f'{prefecture.name}', text=f'{prefecture.name}')) for prefecture in region_data]
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=reply_text)
-    )
+        messages = TextSendMessage(text="県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+        line_bot_api.reply_message(event.reply_token, messages=messages)
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='地方の名前を正しく入力してください')
+        )
+    # reply_text = create_message(event.message.text)
+
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+    #     TextSendMessage(text=reply_text)
+    # )
     
 # def make_button_template():
 #     message_template = TemplateSendMessage(
