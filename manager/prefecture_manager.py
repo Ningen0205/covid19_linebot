@@ -12,7 +12,15 @@ class prefecture_manager(models.Manager):
     INDEX_KYUSHU = [40,41,42,43,44,45,46]
     INDEX_OKINAWA = [47]
 
-    REGION_LIST = {'北海道','東北','関東','中部','近畿','中国','四国','九州','沖縄'}
+    REGION_OBJ = {
+        '東北地方': INDEX_TOHOKU,
+        '関東地方': INDEX_KANTO,
+        '中部地方': INDEX_CHUBU,
+        '近畿地方': INDEX_KINKI,
+        '中国地方': INDEX_CHUGOKU,
+        '四国地方': INDEX_SHIKOKU,
+        '九州地方・沖縄': INDEX_KYUSHU + INDEX_OKINAWA
+    }
 
     def __create_arrays(self, index_arrays):
         result = []
@@ -23,53 +31,9 @@ class prefecture_manager(models.Manager):
 
         return result
     
-    def hokkaido(self):
-        return self.__create_arrays(self.INDEX_HOKKAIDO)
-    
-    def tohoku(self):
-        return self.__create_arrays(self.INDEX_TOHOKU)
-    
-    def kanto(self):
-        return self.__create_arrays(self.INDEX_KANTO)
-    
-    def chubu(self):
-        return self.__create_arrays(self.INDEX_CHUBU)
-    
-    def kinki(self):
-        return self.__create_arrays(self.INDEX_KINKI)
-    
-    def chugoku(self):
-        return self.__create_arrays(self.INDEX_CHUGOKU)
-    
-    def shikoku(self):
-        return self.__create_arrays(self.INDEX_SHIKOKU)
-    
-    def kyushu(self):
-        return self.__create_arrays(self.INDEX_KYUSHU)
-
-    def okinawa(self):
-        return self.__create_arrays(self.INDEX_OKINAWA)
-    
     def get_region_data(self, region_name):
         if self.check_region(region_name):
-            if region_name == '北海道':
-                return self.hokkaido()
-            elif region_name == '東北':
-                return self.tohoku()
-            elif region_name == '関東':
-                return self.kanto()
-            elif region_name == '中部':
-                return self.chubu()
-            elif region_name == '近畿':
-                return self.kinki()
-            elif region_name == '中国':
-                return self.chugoku()
-            elif region_name == '四国':
-                return self.shikoku()
-            elif region_name == '九州':
-                return self.kyushu()
-            elif region_name == '沖縄':
-                return self.okinawa()
+            return self.__create_arrays(self.REGION_OBJ[region_name])
         else:
             return False
     
@@ -77,7 +41,7 @@ class prefecture_manager(models.Manager):
         return super().get_queryset().filter(name=prefecture_name).first()
     
     def check_region(self, region_name):
-        return region_name in self.REGION_LIST
+        return region_name in self.REGION_OBJ
     
     def check_prefecture(self, prefecture_name):
         return bool(super().get_queryset().filter(name=prefecture_name).first())
