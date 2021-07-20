@@ -6,6 +6,8 @@ from linebot.models.actions import MessageAction
 from linebot.models.send_messages import QuickReply, QuickReplyButton
 from .models import infection,prefecture
 
+from django.shortcuts import render
+
 #csrf無効化
 from django.views.decorators.csrf import csrf_exempt
 
@@ -36,6 +38,8 @@ CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 line_bot_api = LineBotApi(ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
+def index(request):
+    return render(request, 'template.html')
 @csrf_exempt
 def webhook(request):
     # signatureの取得
