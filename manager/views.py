@@ -61,15 +61,6 @@ def handle_message(event):
 
         messages = TextSendMessage(text="県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
         line_bot_api.reply_message(event.reply_token, messages=messages)
-    elif user_message == '全データ出力':
-        message = ''
-        for i in infection.objects.all():
-            message += f'ID({i.id}) {i.date_string}:{i.prefecture.name}:{i.infection} \n'
-
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=message)
-        )
     elif prefecture.manager.check_prefecture(user_message):
         line_bot_api.reply_message(
             event.reply_token,
