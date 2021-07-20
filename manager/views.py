@@ -64,7 +64,7 @@ def handle_message(event):
     elif user_message == '全データ出力':
         message = ''
         for i in infection.objects.all():
-            message += f'{i.date_string}:{i.prefecture.name}:{i.infection} \n'
+            message += f'ID({i.id}) {i.date_string}:{i.prefecture.name}:{i.infection} \n'
 
         line_bot_api.reply_message(
             event.reply_token,
