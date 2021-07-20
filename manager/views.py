@@ -70,10 +70,16 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=message)
         )
+    elif prefecture.manager.check_prefecture(user_message):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=create_message(user_message))
+        )
+    
     else:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text='地方の名前を正しく入力してください')
+            TextSendMessage(text='地方または都道府県の名前を正しく入力してください')
         )
     # reply_text = create_message(event.message.text)
 
