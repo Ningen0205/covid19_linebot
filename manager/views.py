@@ -1,4 +1,5 @@
 # django
+from manager.infection_manager import infection_manager
 from django.shortcuts import render
 from django.http import HttpResponseForbidden,HttpResponse
 from linebot.models.actions import MessageAction
@@ -59,7 +60,12 @@ def handle_message(event):
         region_data = prefecture.manager.get_region_data(user_message)
         items = [QuickReplyButton(action=MessageAction(label=f'{prefecture.name}', text=f'{prefecture.name}')) for prefecture in region_data]
 
-        messages = TextSendMessage(text="県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+        infection_region_data = infection.manager.latest_region_prefecture_data(region_data)
+        region_sum = 0
+        for i in infection_region_data:
+            region_sum += i.infection
+
+        messages = TextSendMessage(text=f"{infection_region_data[0].data_string}　{user_message}の合計感染者は、{region_sum}人でした。\n県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
         line_bot_api.reply_message(event.reply_token, messages=messages)
     elif prefecture.manager.check_prefecture(user_message):
         line_bot_api.reply_message(
