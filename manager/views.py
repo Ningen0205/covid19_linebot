@@ -65,7 +65,7 @@ def handle_message(event):
         for prefecture_obj in infection_region_data:
             region_sum += prefecture_obj.infection
 
-        messages = TextSendMessage(text=f"{infection_region_data[0].data_string}　{user_message}の合計感染者は、{region_sum}人でした。\n県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+        messages = TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は、{region_sum}人でした。\n県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
         line_bot_api.reply_message(event.reply_token, messages=messages)
     elif prefecture.manager.check_prefecture(user_message):
         line_bot_api.reply_message(
