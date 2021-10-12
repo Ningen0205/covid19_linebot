@@ -29,9 +29,11 @@ def get_scraping():
     html = driver.page_source.encode('utf-8')
     soup = BeautifulSoup(html, 'html.parser')
 
-    # 更新日時部分をスクレイピングしてる
-    data = soup.find('g', { 'id' : 'mc1'}).text
-    updated_time = soup.findAll('span', { 'class' : 'title-block-note'})[1].text
+    # 該当のセクション部分を取得
+    section = soup.find(id="c-pref")
+
+    # 更新日時部分
+    updated_time = section.find(class_="title-block-note").text
 
     # 変数の初期化
     result = cl.OrderedDict()
