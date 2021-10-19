@@ -1,5 +1,4 @@
 from manager.models import infection, prefecture
 
 def run():
-    print("test")
-    pass
+    infection.objects.filter(id__gt=8000).delete()
