@@ -108,11 +108,3 @@ def handle_message(event):
 #         event.reply_token,
 #         messages
 #     )
-
-# 友達追加した際のイベントを仮組で追加
-@handler.add(FollowEvent)
-def handle_follow(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text='追加してくれてありがとう!')
-    )
