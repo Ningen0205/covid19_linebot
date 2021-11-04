@@ -56,6 +56,7 @@ def create_message(target):
     return message
 
 def send_message(target='全国'):
+    print(ACCESS_TOKEN)
     line_bot_api = LineBotApi(ACCESS_TOKEN)
     
     message = create_message(target)

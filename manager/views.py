@@ -60,6 +60,7 @@ def webhook(request):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
+    # 送信されたテキストメッセージが地方名と同じ場合
     if prefecture.manager.check_region(user_message):
         region_data = prefecture.manager.get_region_data(user_message)
         items = [QuickReplyButton(action=MessageAction(label=f'{prefecture.name}', text=f'{prefecture.name}')) for prefecture in region_data]
@@ -69,26 +70,50 @@ def handle_message(event):
         for prefecture_obj in infection_region_data:
             region_sum += prefecture_obj.infection
 
-        messages = TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は、{region_sum}人でした。\n県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+    #     messages = TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は、{region_sum}人でした。\n県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+    #     line_bot_api.reply_message(event.reply_token, messages=messages)
+    # elif prefecture.manager.check_prefecture(user_message):
+    #     line_bot_api.reply_message(
+    #         event.reply_token,
+    #         TextSendMessage(text=create_message(user_message))
+    #     )
+
+    # 地方の感染者数を返す
+        messages = TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は、{region_sum}人でした。")
         line_bot_api.reply_message(event.reply_token, messages=messages)
+
+    # 確認テンプレート
+
+        # yesならクイックリプライ
+
+
+    # 地方名ではなく県名だった場合
     elif prefecture.manager.check_prefecture(user_message):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=create_message(user_message))
         )
-    
+
+    # 地方名でも県名でもない場合
     else:
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='地方または都道府県の名前を正しく入力してください')
         )
+
+    
     # reply_text = create_message(event.message.text)
 
     # line_bot_api.reply_message(
     #     event.reply_token,
     #     TextSendMessage(text=reply_text)
     # )
-    
+
+
+# def check_template():
+#     buttons_template_message = TemplateSendMessage(
+
+
 # def make_button_template():
 #     message_template = TemplateSendMessage(
 #         alt_text="にゃーん",
