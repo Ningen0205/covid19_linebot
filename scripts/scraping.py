@@ -4,7 +4,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 
 # import しないとchromedriverがドライバーがない旨のエラーを吐く
-import chromedriver_binary
+# import chromedriver_binary
 
 # 順序付き辞書を作成するため
 import collections as cl
