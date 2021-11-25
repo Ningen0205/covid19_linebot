@@ -13,7 +13,18 @@ from django.views.decorators.csrf import csrf_exempt
 
 # linebot関連
 from linebot import LineBotApi,WebhookHandler
-from linebot.models import MessageEvent,TextMessage,TextSendMessage,FollowEvent,TemplateSendMessage,ButtonsTemplate,URIAction
+
+from linebot.models import (
+    MessageEvent,
+    TextMessage,
+    TextSendMessage,
+    FollowEvent,
+    TemplateSendMessage,
+    ButtonsTemplate,
+    URIAction,
+    ConfirmTemplate,
+    PostbackAction
+)
 
 # .env関連
 import os
@@ -70,21 +81,9 @@ def handle_message(event):
         for prefecture_obj in infection_region_data:
             region_sum += prefecture_obj.infection
 
-    #     messages = TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は、{region_sum}人でした。\n県ごとの感染者数が知りたい場合は下のボタンをタップしてください。", quick_reply=QuickReply(items=items))
-    #     line_bot_api.reply_message(event.reply_token, messages=messages)
-    # elif prefecture.manager.check_prefecture(user_message):
-    #     line_bot_api.reply_message(
-    #         event.reply_token,
-    #         TextSendMessage(text=create_message(user_message))
-    #     )
-
-    # 地方の感染者数を返す
-        messages = TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は、{region_sum}人でした。")
-        line_bot_api.reply_message(event.reply_token, messages=messages)
-
-    # 確認テンプレート
-
-        # yesならクイックリプライ
+        # 地方の感染者数を返す
+        messages = [TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は{region_sum}人でした。"), confirm()]
+        line_bot_api.reply_message(event.reply_token, messages=messages) 
 
 
     # 地方名ではなく県名だった場合
@@ -102,6 +101,41 @@ def handle_message(event):
         )
 
     
+
+# 確認テンプレート
+def confirm():
+    confirm_template_massage = TemplateSendMessage(
+        alt_text='Confirm template',
+        template=ConfirmTemplate(
+            text='県ごとの感染者数が知りたい場合はYesをタップしてください。',
+            # actionの中身は必ず二つだけ
+            actions=[
+                PostbackAction(
+                    # labelが押したときに送信される文字
+                    label='YES',
+                    #display_text='Yes'
+                    data='yes'
+                ),
+                PostbackAction(
+                    label='NO',
+                    #display_text='No',
+                    data='No'
+                )
+                # MessageAction(
+                #     # 画面に表示する内容
+                #     label='message',
+                #     # 押した時のメッセージ
+                #     text='message text'
+                # )                                   
+            ]
+            if data == 'yes':
+                message = TextSendMessage(text="感染者数が知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+                line_bot_api.reply_message(event.reply_token, messages=messages)
+        )
+    )
+    return confirm_template_massage
+
+
     # reply_text = create_message(event.message.text)
 
     # line_bot_api.reply_message(
@@ -109,9 +143,6 @@ def handle_message(event):
     #     TextSendMessage(text=reply_text)
     # )
 
-
-# def check_template():
-#     buttons_template_message = TemplateSendMessage(
 
 
 # def make_button_template():
