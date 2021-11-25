@@ -128,9 +128,9 @@ def confirm():
                 #     text='message text'
                 # )                                   
             ]
-            if data == 'yes':
-                message = TextSendMessage(text="感染者数が知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
-                line_bot_api.reply_message(event.reply_token, messages=messages)
+            # if data == 'yes':
+            #     message = TextSendMessage(text="感染者数が知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+            #     line_bot_api.reply_message(event.reply_token, messages=messages)
         )
     )
     return confirm_template_massage
