@@ -71,6 +71,10 @@ def webhook(request):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
+
+    # クイックリプライを表示させるかの判定
+    quick_check = False
+    
     # 送信されたテキストメッセージが地方名と同じ場合
     if prefecture.manager.check_region(user_message):
         region_data = prefecture.manager.get_region_data(user_message)
@@ -83,6 +87,7 @@ def handle_message(event):
         
         # 地方の感染者数を返す
         messages = [TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は{region_sum}人でした。"), confirm()]
+        quick_check = True
         line_bot_api.reply_message(event.reply_token, messages=messages) 
 
 
@@ -100,11 +105,14 @@ def handle_message(event):
             TextSendMessage(text='地方または都道府県の名前を正しく入力してください')
         )
 
-    
-    else:
-        line_bot_api.reply_message(
+    # https://dev.classmethod.jp/articles/line-messaging-api-action-object/
+    # (確認メッセージが表示された後、dataの中身がyesならクイックリプライを表示)
+    if quick_check==True and postback.data=='yes':
+        quick_check = False
+        data = 'No'
+        message = TextSendMessage(text="感染者数が知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+        line_bot_api.reply_message(event.reply_token, messages=messages)
 
-        )
 
     
 
@@ -119,8 +127,8 @@ def confirm():
                 PostbackAction(
                     # labelが押したときに送信される文字
                     label='YES',
-                    display_text="感染者数が知りたい県のボタンをタップしてください。",
-                    data=quick_reply=QuickReply(items=items)
+                    #display_text='Yes'
+                    data='yes'
                 ),
                 PostbackAction(
                     label='NO',
