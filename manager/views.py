@@ -80,7 +80,7 @@ def handle_message(event):
         region_sum = 0
         for prefecture_obj in infection_region_data:
             region_sum += prefecture_obj.infection
-
+        
         # 地方の感染者数を返す
         messages = [TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は{region_sum}人でした。"), confirm()]
         line_bot_api.reply_message(event.reply_token, messages=messages) 
@@ -101,6 +101,12 @@ def handle_message(event):
         )
 
     
+    else:
+        line_bot_api.reply_message(
+
+        )
+
+    
 
 # 確認テンプレート
 def confirm():
@@ -113,8 +119,8 @@ def confirm():
                 PostbackAction(
                     # labelが押したときに送信される文字
                     label='YES',
-                    #display_text='Yes'
-                    data='yes'
+                    display_text="感染者数が知りたい県のボタンをタップしてください。",
+                    data=quick_reply=QuickReply(items=items)
                 ),
                 PostbackAction(
                     label='NO',
