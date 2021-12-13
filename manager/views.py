@@ -23,7 +23,9 @@ from linebot.models import (
     ButtonsTemplate,
     URIAction,
     ConfirmTemplate,
-    PostbackAction
+    PostbackAction,
+    PostbackEvent,
+    PostbackTemplateAction
 )
 
 # .env関連
@@ -49,6 +51,12 @@ CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 line_bot_api = LineBotApi(ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
+# 変数の初期化
+valid_check = True
+items = None
+user_message = None
+
+
 def index(request):
     return render(request, 'template.html')
 @csrf_exempt
@@ -67,13 +75,17 @@ def webhook(request):
     return HttpResponse('送信完了')
 
 
-# テキストメッセージが送信された時のハンドルイベント
+# テキストメッセージが送信された時のハンドルイベント(メッセージを返すときも)
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    user_message = event.message.text
 
-    # クイックリプライを表示させるかの判定
-    quick_check = False
+    # グローバル変数ということを宣言
+    global items
+    global valid_check
+    global user_message
+
+    # ユーザから送信されたメッセージの取得
+    user_message = event.message.text
     
     # 送信されたテキストメッセージが地方名と同じ場合
     if prefecture.manager.check_region(user_message):
@@ -87,8 +99,8 @@ def handle_message(event):
         
         # 地方の感染者数を返す
         messages = [TextSendMessage(text=f"{infection_region_data[0].date_string}　{user_message}の合計感染者は{region_sum}人でした。"), confirm()]
-        quick_check = True
-        line_bot_api.reply_message(event.reply_token, messages=messages) 
+        valid_check = True
+        line_bot_api.reply_message(event.reply_token, messages=messages)
 
 
     # 地方名ではなく県名だった場合
@@ -105,77 +117,62 @@ def handle_message(event):
             TextSendMessage(text='地方または都道府県の名前を正しく入力してください')
         )
 
-    # https://dev.classmethod.jp/articles/line-messaging-api-action-object/
-    # (確認メッセージが表示された後、dataの中身がyesならクイックリプライを表示)
-    if quick_check==True and postback.data=='yes':
-        quick_check = False
-        data = 'No'
-        message = TextSendMessage(text="感染者数が知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
-        line_bot_api.reply_message(event.reply_token, messages=messages)
-
-
-    
 
 # 確認テンプレート
 def confirm():
+    global user_message
     confirm_template_massage = TemplateSendMessage(
-        alt_text='Confirm template',
+        # ここを変更すればlineで通知される文字が変更される
+        alt_text='メッセージを選択してください',
         template=ConfirmTemplate(
-            text='県ごとの感染者数が知りたい場合はYesをタップしてください。',
+            text=user_message+'の県ごとの感染者数が知りたい場合はYESをタップしてください。',
             # actionの中身は必ず二つだけ
             actions=[
                 PostbackAction(
                     # labelが押したときに送信される文字
                     label='YES',
-                    #display_text='Yes'
                     data='yes'
                 ),
                 PostbackAction(
                     label='NO',
-                    #display_text='No',
-                    data='No'
-                )
-                # MessageAction(
-                #     # 画面に表示する内容
-                #     label='message',
-                #     # 押した時のメッセージ
-                #     text='message text'
-                # )                                   
+                    data='no'
+                )                                 
             ]
         )
     )
-    # if data == 'yes':
-    #     message = TextSendMessage(text="感染者数が知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
-    #     line_bot_api.reply_message(event.reply_token, messages=messages)
-
     return confirm_template_massage
 
 
-    # reply_text = create_message(event.message.text)
-
-    # line_bot_api.reply_message(
-    #     event.reply_token,
-    #     TextSendMessage(text=reply_text)
-    # )
 
 
+# ポストバックアクションが送信されたときのハンドルイベント
+@handler.add(PostbackEvent)
+def handle_postback(event):
 
-# def make_button_template():
-#     message_template = TemplateSendMessage(
-#         alt_text="にゃーん",
-#         template=ButtonsTemplate(
-#             text="どこに表示されるかな？",
-#             title="タイトルですよ",
-#             image_size="cover",
-#             thumbnail_image_url="https://example.com/gazou.jpg",
-#         )
-#     )
-#     return message_template
+    # グローバル変数ということを宣言
+    global items
+    global valid_check
 
-# @handler.add(MessageEvent, message=TextMessage)
-# def handle_image_message(event):
-#     messages = make_button_template()
-#     line_bot_api.reply_message(
-#         event.reply_token,
-#         messages
-#     )
+
+    # 確認メッセージが地方名が送られた後、一回目なら処理を行う
+    if valid_check == True:
+
+        # ポストバックアクションのdataの中身がyesならクイックリプライ
+        if event.postback.data=='yes':
+            message = TextSendMessage(text="感染者数を知りたい県のボタンをタップしてください。", quick_reply=QuickReply(items=items))
+            line_bot_api.reply_message(event.reply_token, messages=message)
+
+        elif event.postback.data=='no':
+            # noが選択された場合はitemsの中身を削除
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='NOを選択しました。')
+            )
+        
+        # 使用した変数の初期化
+        items = None
+        valid_check = False
+    
+
+
+
